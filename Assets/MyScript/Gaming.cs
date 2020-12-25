@@ -21,6 +21,7 @@ public class Gaming : MonoBehaviour
 
 
     bool isRoundOver;
+    //  -1 represent you haven't throw the card
     int thisRoundThrow;
 
     private string saveMyCardString;
@@ -74,11 +75,7 @@ public class Gaming : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //if (Input.GetKeyDown(KeyCode.D))
-        //{
-        //    Debug.Log(saveMyCardString);
-        //    Debug.Log(saveRivalCardString);
-        //}
+
     }
     public void ThrowCard(int cardIndex)
     {
@@ -116,20 +113,28 @@ public class Gaming : MonoBehaviour
 
     public void OnRestartButtonClicked()
     {
-        //do somthing
+        //  set a Msg on to the lobby
         StartCoroutine(ContinueToCheckRestart());
         Restart.SetActive(false);
         SteamMatchmaking.SetLobbyMemberData(
             serverClient.ThisLobbyID,
             "isRestart",
             "Y".ToString());
+        for(int i = 0; i < 5; i++)
+        {   // reset the round data for a new round
+            SteamMatchmaking.SetLobbyMemberData(
+                serverClient.ThisLobbyID,
+                roundKey[i],
+                ""
+                );
+        }
     }
 
 
     IEnumerator WaitToCompare(LobbyDataUpdate_t result, string recvData)
     {
         while (thisRoundThrow == -1)
-        {
+        {   //  -1 represent you haven't throw the card
             WLMsg.text = "Your rival is ready.";
             yield return new WaitForSeconds(0.2f);
         }
@@ -149,10 +154,12 @@ public class Gaming : MonoBehaviour
         }
         else
         {
-            Debug.Log("Something error on compare number.");
+            Debug.Log("Something error when comparing number.");
         }
         Debug.Log("Rival use " + recvData +".");
         Debug.Log("round " + round + " is over.");
+
+        //  set next round number
         round++;
         isRoundOver = true;
         thisRoundThrow = -1;
@@ -166,7 +173,7 @@ public class Gaming : MonoBehaviour
     }
 
     IEnumerator ContinueToCheckRestart()
-    {
+    {   //  check until your rival press the restart button
         string recvData = SteamMatchmaking.GetLobbyMemberData(
             serverClient.ThisLobbyID,
             (CSteamID)serverClient.RecvCsteamID,

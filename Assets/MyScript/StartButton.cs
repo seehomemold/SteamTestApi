@@ -14,8 +14,10 @@ public class StartButton : MonoBehaviour
     private ServerClient serverClient;
 
     [SerializeField]
+    //  controll the chatroom object
     private GameObject chatRoom;
     [SerializeField]
+    //  access the Manager
     private GameObject gameObj;
 
     private bool isFindRival;
@@ -126,6 +128,7 @@ public class StartButton : MonoBehaviour
 
     void OnLobbyEntered(LobbyEnter_t result)
     {
+        //  reponse == 1 represent someone enter lobby success
         if (result.m_EChatRoomEnterResponse == 1)
         {
             current_lobbyID = result.m_ulSteamIDLobby;
@@ -148,7 +151,6 @@ public class StartButton : MonoBehaviour
             {
 
             }
-            //SteamMatchmaking.GetLobbyMemberData((CSteamID)result.m_ulSteamIDLobby,)
         }
         else
         {
